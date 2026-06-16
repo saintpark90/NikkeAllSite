@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>승리의 여신 니케 · 유용한 사이트 모음</title>
+<meta name="description" content="모바일게임 승리의 여신 니케 관련 계산기, 시뮬레이션, DB, 위키 등 유용한 사이트를 한 페이지에 모았습니다." />
+<link rel="preconnect" href="https://s.wordpress.com" />
+<style>
+  :root {
+    --bg: #0b0e16;
+    --bg-soft: #121726;
+    --card: #161c2d;
+    --card-hover: #1d2436;
+    --border: #283149;
+    --text: #e8ecf6;
+    --text-dim: #97a1bb;
+    --text-faint: #6b748f;
+    --accent: #5b8cff;
+    --accent-2: #c46bff;
+    --accent-glow: rgba(91, 140, 255, 0.35);
+    --chip: #1f2740;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --radius: 16px;
+    --h1-grad: linear-gradient(90deg, #fff 0%, #b9c6ff 50%, #e6c2ff 100%);
+    --skeleton: linear-gradient(100deg, #161c2d 30%, #222b42 50%, #161c2d 70%);
+  }
+
+  body.light {
+    --bg: #eef1f8;
+    --bg-soft: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f4f7fd;
+    --border: #e0e5f0;
+    --text: #1a2236;
+    --text-dim: #586079;
+    --text-faint: #8b94ac;
+    --accent: #3f6fe0;
+    --accent-2: #a64bff;
+    --accent-glow: rgba(63, 111, 224, 0.25);
+    --chip: #eef1f8;
+    --shadow: 0 10px 28px rgba(20, 30, 60, 0.1);
+    --h1-grad: linear-gradient(90deg, #1a2236 0%, #3f6fe0 55%, #a64bff 100%);
+    --skeleton: linear-gradient(100deg, #eef1f8 30%, #dde3f0 50%, #eef1f8 70%);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(196, 107, 255, 0.18), transparent 60%),
+      radial-gradient(900px 500px at -5% 0%, rgba(91, 140, 255, 0.18), transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ===== Theme toggle ===== */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .theme-toggle:hover { transform: scale(1.08); border-color: var(--accent); color: var(--accent); }
+  .theme-toggle .moon { display: none; }
+  .theme-toggle .sun { display: block; }
+  body.light .theme-toggle .moon { display: block; }
+  body.light .theme-toggle .sun { display: none; }
+
+  /* ===== Header ===== */
+  header.hero {
+    position: relative;
+    padding: 56px 20px 32px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero .logo {
+    width: min(720px, 92%);
+    height: auto;
+    border-radius: 14px;
+    margin: 0 auto 18px;
+    display: block;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.4);
+  }
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: var(--h1-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p.sub {
+    margin: 0 auto;
+    max-width: 640px;
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+  .hero .stats {
+    margin-top: 16px;
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  .hero .stats b { color: var(--accent-2); }
+
+  /* ===== Controls ===== */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: linear-gradient(180deg, var(--bg) 60%, transparent);
+    backdrop-filter: blur(8px);
+    padding: 14px 0 16px;
+    margin-bottom: 8px;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 15px;
+    max-width: 460px;
+    margin: 0 auto 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .search-box svg { flex: none; color: var(--text-faint); }
+  .search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 15px;
+    width: 100%;
+    font-family: inherit;
+  }
+  .search-box input::placeholder { color: var(--text-faint); }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .chip {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--text-dim);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.18s ease;
+    user-select: none;
+  }
+  .chip:hover { color: var(--text); border-color: #3a456a; }
+  .chip.active {
+    color: #fff;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+
+  /* ===== View toggle ===== */
+  .view-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+  }
+  .view-toggle button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 13px;
+    border-radius: 8px;
+    transition: all 0.16s ease;
+  }
+  .view-toggle button:hover { color: var(--text); }
+  .view-toggle button.active {
+    color: #fff;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 3px 10px var(--accent-glow);
+  }
+  .view-toggle svg { flex: none; }
+
+  /* ===== Grid ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 22px;
+    margin-top: 22px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  }
+  .card.fav { border-color: #f5b942; }
+  .card.fav:hover { border-color: #f5b942; }
+
+  .thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #1a2236, #0f1422);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.4s ease;
+  }
+  .card:hover .thumb img { transform: scale(1.05); }
+  .thumb img.loaded { opacity: 1; }
+  .thumb .skeleton {
+    position: absolute;
+    inset: 0;
+    background: var(--skeleton);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .thumb.blank {
+    background:
+      repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,0.02) 14px 28px),
+      linear-gradient(135deg, var(--card-hover), var(--bg-soft));
+  }
+  .thumb .open-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(11, 14, 22, 0.55);
+    backdrop-filter: blur(2px);
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+  .thumb:hover .open-hint { opacity: 1; }
+
+  .num-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    height: 30px;
+    padding: 0 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(11, 14, 22, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(4px);
+  }
+  .cat-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #dfe6ff;
+    background: rgba(91, 140, 255, 0.28);
+    border: 1px solid rgba(91, 140, 255, 0.45);
+    padding: 4px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .off-badge {
+    background: rgba(255, 95, 95, 0.25);
+    border-color: rgba(255, 95, 95, 0.5);
+    color: #ffd2d2;
+  }
+
+  .body {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .body .head-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .body h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+  .fav-btn {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    margin: -4px -4px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-faint);
+    border-radius: 9px;
+    transition: all 0.16s ease;
+  }
+  .fav-btn:hover { color: #f5b942; background: var(--bg-soft); transform: scale(1.12); }
+  .fav-btn svg { fill: none; stroke: currentColor; stroke-width: 2; }
+  .card.fav .fav-btn { color: #f5b942; }
+  .card.fav .fav-btn svg { fill: #f5b942; }
+
+  .body .desc {
+    margin: 0 0 16px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    flex: 1;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 13px;
+    border-radius: 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.16s ease;
+  }
+  .link-btn:hover {
+    border-color: var(--accent);
+    background: var(--card-hover);
+    transform: translateX(2px);
+  }
+  .link-btn .lbl {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link-btn svg { flex: none; color: var(--text-faint); }
+  .link-btn:hover svg { color: var(--accent); }
+  .link-btn.guide {
+    background: transparent;
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    border-style: dashed;
+  }
+  .link-btn.guide:hover { color: var(--accent-2); border-color: var(--accent-2); }
+
+  /* ===== List view ===== */
+  .grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .grid.list-view .card { flex-direction: row; align-items: stretch; }
+  .grid.list-view .thumb {
+    flex: none;
+    width: 280px;
+    aspect-ratio: auto;
+    border-right: 1px solid var(--border);
+  }
+  .grid.list-view .body { padding: 18px 22px; }
+  .grid.list-view .body .desc { margin-bottom: 14px; }
+  .grid.list-view .links { flex-direction: row; flex-wrap: wrap; }
+  .grid.list-view .link-btn { flex: 1 1 auto; min-width: 180px; }
+  @media (max-width: 640px) {
+    .grid.list-view .card { flex-direction: column; }
+    .grid.list-view .thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .grid.list-view .link-btn { flex-basis: 100%; }
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--text-faint);
+    padding: 60px 20px;
+    font-size: 15px;
+    display: none;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12.5px;
+    padding: 40px 20px 0;
+    line-height: 1.8;
+  }
+  footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+    header.hero { padding: 40px 16px 24px; }
+  }
+</style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" title="라이트/다크 모드 전환" aria-label="테마 전환">
+    <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <header class="hero">
+    <img class="logo" src="assets/logo.png" alt="NIKKE ALL SITE" />
+    <h1>승리의 여신 니케 · 유용한 사이트 모음</h1>
+    <p class="sub">계산기 · 시뮬레이션 · DB · 위키 · 랭킹까지,<br/>니케를 더 깊게 즐기기 위한 사이트들을 한 페이지에 정리했습니다.</p>
+    <p class="stats">총 <b id="totalCount">0</b>개 카테고리 · <b id="siteCount">0</b>개 사이트</p>
+  </header>
+
+  <div class="wrap">
+    <div class="controls">
+      <label class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="사이트 이름이나 키워드로 검색…" autocomplete="off" />
+      </label>
+      <div class="filters" id="filters"></div>
+      <div style="display:flex; justify-content:center; margin-top:14px;">
+        <div class="view-toggle" id="viewToggle">
+          <button type="button" data-view="grid" class="active" title="격자 보기">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            격자
+          </button>
+          <button type="button" data-view="list" title="목록 보기">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            목록
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="no-results" id="noResults">검색 결과가 없습니다.</div>
+  </div>
+
+  <footer>
+    개인 정리용 모음 페이지 · 썸네일은 자동 캡처되며 실제 사이트와 다를 수 있습니다.<br />
+    각 사이트의 저작권은 해당 제작자에게 있습니다.
+  </footer>
+
+<script>
+  const SITES = [
+    { n: 1, cat: "시뮬레이션", title: "오버로드 모듈작 시뮬레이션",
+      desc: "오버로드 장비 강화 결과를 미리 돌려보는 시뮬레이터. 어떤 옵션을 노릴지 감각을 익히기 좋음.",
+      url: "https://nikkemodule.vercel.app/" },
+    { n: 2, cat: "시뮬레이션", title: "오버로드 최적화 (syuen.love)",
+      desc: "보유 장비의 옵션 조합을 분석해 가장 효율적인 오버로드 강화 경로를 제시.",
+      url: "https://syuen.love/",
+      guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/171042301" } },
+    { n: 3, cat: "계산기", title: "NIKKE Deck (종합 덱 빌더)",
+      desc: "팀 편성, 버스트 사이클, 데미지 계산을 한 번에 다루는 종합 계산 사이트. 니케 유저들이 가장 폭넓게 사용하는 도구 중 하나.",
+      url: "https://nikke-deck.com/",
+      guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/126142016" } },
+    { n: 4, cat: "성장", title: "니케 툴즈 (NIKKE Tools)",
+      desc: "솔로 레이드용 5개 덱을 동시에 구성하고 컷라인을 가늠할 수 있는 다용도 툴. 레이드 준비와 자원 배분 계획에 유용.",
+      url: "https://nikke-tools.netlify.app/" },
+    { n: 5, cat: "랭킹", title: "에닉 (enikk) · 랭커 벤치마크",
+      desc: "솔로·유니온 레이드 상위 랭커들의 실제 조합과 딜량을 열람할 수 있는 사이트. 고점 세팅을 참고해 내 편성을 다듬기 좋음.",
+      url: "https://enikk.app/" },
+    { n: 6, cat: "종합", title: "Prydwen (종합 공략·티어)", noThumb: true,
+      desc: "캐릭터 티어 평가, 빌드, 공략을 깔끔하게 정리한 해외 종합 가이드. 신규·복귀 유저가 큰 그림을 잡기에 가장 좋은 출발점.",
+      url: "https://www.prydwen.gg/nikke" },
+    { n: 7, cat: "정보", title: "상담 족보 사이트",
+      desc: "캐릭터별 추천 세팅과 궁합을 정리한 상담 족보. 최신 픽업을 상단에 노출해줘 빠르게 찾아보기 좋음.",
+      url: "https://wiki3.jp/nikke/page/217" },
+    { n: 8, cat: "DB", title: "니케 DB (Visualiser)",
+      desc: "캐릭터 라이브2D, 일러스트, 번역된 4컷 만화 등 게임 리소스를 열람하고 고화질로 내려받을 수 있는 데이터베이스 뷰어.",
+      url: "https://nikke-db.pages.dev/visualiser" },
+    { n: 9, cat: "계산기", title: "스레나 프레임 계산 (PVP)",
+      desc: "아레나 전투를 프레임 단위로 비교 분석하는 PVP 특화 계산기. 속도 싸움이 치열한 대인전 세팅에 사실상 필수.",
+      url: "https://nikke.top/" },
+    { n: 10, cat: "시뮬레이션", title: "신데렐라·라피 딜량 계산",
+      desc: "오버로드 수치를 입력해 화력형 캐릭터의 실제 딜과 장탄·재장전을 시뮬레이션. 크뎀↔크확 같은 옵션 변경 효율을 비교하는 데 유용.",
+      url: "https://nikke-fire-simulation.vercel.app/" },
+    { n: 11, cat: "성장", title: "소장품 강화 최적화 (syuen)",
+      desc: "보유 소장품 비율을 유지하며 강화하는 최적 경로를 계산. 장기적인 자원 운용 관점에서 직관적이고 활용도가 높음.",
+      url: "https://syuen.love/doll/",
+      guide: { label: "제작자 챈 요약 / 행동강령", url: "https://arca.live/b/nikketgv/128411014" } },
+    { n: 12, cat: "정보", title: "니케 스킬·픽업 검색",
+      desc: "스킬 검색은 물론 역대 픽업 캐릭터의 분포와 출시 시기를 빠르게 파악할 수 있는 자료형 사이트.",
+      url: "https://nikkesearch.glide.page/dl/da19fa" },
+    { n: 13, cat: "정보", title: "스킬검색 위키 (Skill Wiki)",
+      desc: "캐릭터 스킬을 키워드로 찾아보기 쉽게 정리한 위키. 인게임 검색보다 직관적이라 입문자에게 추천.",
+      url: "https://nikkeskillwiki.com/MainHome/" },
+    { n: 14, cat: "계산기", title: "델 빌딩 사이트 (Mimir)",
+      desc: "레이드 덱 구성과 애장품 미란다 버프 적용 여부를 계산해주는 도구. 계정 연동 시 자동 분석, 수동 입력도 가능.",
+      url: "https://nikkemimir.xyz/" },
+    { n: 15, cat: "종합", title: "nikke.gg (종합 정보)",
+      desc: "캐릭터 정보, 티어, 가이드를 폭넓게 제공하는 해외 종합 정보 사이트. 다양한 자료를 한 곳에서 확인 가능.",
+      url: "https://nikke.gg/" },
+    { n: 16, cat: "성장", title: "코더 수급량 사이트",
+      desc: "전초기지 코어더스트 수급 효율을 단계별로 정리한 성장 참고 자료. 단기 섬멸 기준으로 성장 계획을 세우는 데 도움.",
+      url: "https://nikkeoutpost.netlify.app/",
+      guide: { label: "관련 챈 글", url: "https://arca.live/b/nikketgv/160379444" } },
+    { n: 17, cat: "시뮬레이션", title: "종합 가챠·확률 시뮬 (ppopki)",
+      desc: "소장품 합성, 우월코드 뽑기, 오버로드 등 각종 확률 콘텐츠를 망라한 종합 시뮬레이션 사이트.",
+      url: "https://ppopki.com/simulation/index.php" },
+    { n: 18, cat: "시뮬레이션", title: "픽업 가챠 시뮬 (nibung)",
+      desc: "픽업 뽑기를 미리 돌려볼 수 있는 가챠 시뮬레이터. 가벼운 운 테스트용으로 적합.",
+      url: "https://nibung.kr/gacha" },
+    { n: 19, cat: "계산기", title: "리버렐리오·흑련 버프 계산기",
+      desc: "리버렐리오 '차가운 수심' 차징 속도 버프 적용을 계산하는 전용 도구. 흑련의 공격력 수치 조정도 지원.",
+      url: "https://milite-kim.github.io/-/" },
+    { n: 20, cat: "DB", title: "니케 DB 2 (NKAS)",
+      desc: "캐릭터 리소스를 열람하는 또 다른 데이터베이스. 게임 사운드트랙(OST) 감상을 함께 제공하는 점이 특징.",
+      url: "https://nkas.pages.dev/" },
+    { n: 21, cat: "성장", title: "소장품 강화 최적화 (changjoeconomy)",
+      desc: "보유 소장품 개수를 기반으로 강화 루트를 계산해주는 도구. 11번 사이트의 대안으로 함께 비교해볼 만함.",
+      url: "https://changjoeconomy.github.io/collectibles/" },
+    { n: 22, cat: "시트", title: "유레 결산시트",
+      desc: "유니온 레이드 결과를 집계·정리하는 구글 시트 템플릿. 사본을 만들어 유니온 결산 관리에 활용.",
+      url: "https://docs.google.com/spreadsheets/d/1GuV-FywoN0CjeVoY4p3yfzxel15Mt8TsyhfT6b2XonA/edit?gid=737872758#gid=737872758" },
+    { n: 23, cat: "위키", title: "니케 팬덤 위키", noThumb: true,
+      desc: "스토리와 캐릭터 설정을 영어로 정리한 글로벌 팬덤 위키. 세계관·서사 자료를 찾을 때 유용.",
+      url: "https://nikke-goddess-of-victory-international.fandom.com/wiki/Home" },
+    { n: 24, cat: "유틸", title: "임시 이메일 (temp-mail)", noThumb: true,
+      desc: "리세마라 시 빠르게 쓸 수 있는 1회용 이메일 서비스. 직관적인 UI로 사용이 간편함.",
+      url: "https://temp-mail.org/ko" },
+    { n: 25, cat: "유틸", title: "임시 이메일 (kuku.lu)",
+      desc: "리세마라용 임시 이메일 서비스. 여러 주소를 받아 계정 생성에 활용할 수 있음.",
+      url: "https://m.kuku.lu/ko.php" },
+    { n: 26, cat: "정보", title: "유실물 정리 (GameWith)",
+      desc: "이벤트 유실물 등 일부 콘텐츠 정보를 정리한 일본 공략 페이지. 번역기로 참고하는 용도.",
+      url: "https://gamewith.jp/nikke/article/show/370147" }
+  ];
+
+  SITES.forEach(s => { s.id = s.url; });
+
+  const FAV_KEY = "nikke_favs";
+  const THEME_KEY = "nikke_theme";
+
+  function loadFavs() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+    catch { return []; }
+  }
+  function saveFavs(arr) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(arr)); } catch {}
+  }
+  let favs = loadFavs();
+
+  const grid = document.getElementById("grid");
+  const filtersEl = document.getElementById("filters");
+  const searchEl = document.getElementById("search");
+  const noResults = document.getElementById("noResults");
+  const cardMap = {};
+
+  document.getElementById("siteCount").textContent = SITES.length;
+  document.getElementById("totalCount").textContent = new Set(SITES.map(s => s.cat)).size;
+
+  const CAT_ORDER = ["전체", "계산기", "시뮬레이션", "성장", "DB", "위키", "정보", "랭킹", "시트", "종합", "유틸"];
+  let activeCat = "전체";
+
+  function domainOf(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ""); }
+    catch { return url; }
+  }
+  function thumbUrl(url) {
+    return "https://s.wordpress.com/mshots/v1/" + encodeURIComponent(url) + "?w=640&h=360";
+  }
+  function externalIcon() {
+    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+  }
+  function starIcon() {
+    return '<svg width="20" height="20" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  }
+
+  function buildCard(s) {
+    const card = document.createElement("article");
+    card.className = "card" + (favs.includes(s.id) ? " fav" : "");
+    card.dataset.cat = s.cat;
+    card.dataset.id = s.id;
+    card.dataset.search = (s.title + " " + s.desc + " " + s.url).toLowerCase();
+
+    const guideHtml = s.guide ? `
+      <a class="link-btn guide" href="${s.guide.url}" target="_blank" rel="noopener noreferrer">
+        <span class="lbl">📖 ${s.guide.label}</span>${externalIcon()}
+      </a>` : "";
+
+    const thumbInner = s.noThumb ? "" : `
+        <div class="skeleton"></div>
+        <img loading="lazy" src="${thumbUrl(s.url)}" alt="${s.title} 썸네일"
+             onload="this.classList.add('loaded'); const sk=this.parentNode.querySelector('.skeleton'); if(sk) sk.remove();"
+             onerror="this.style.display='none'; const sk=this.parentNode.querySelector('.skeleton'); if(sk) sk.remove();" />`;
+
+    card.innerHTML = `
+      <a class="thumb${s.noThumb ? " blank" : ""}" href="${s.url}" target="_blank" rel="noopener noreferrer">
+        ${thumbInner}
+        <div class="open-hint">${externalIcon()} 사이트 열기</div>
+        <span class="num-badge">${s.n}</span>
+        <span class="cat-badge ${s.off ? "off-badge" : ""}">${s.off ? "● OFF" : s.cat}</span>
+      </a>
+      <div class="body">
+        <div class="head-row">
+          <h3>${s.title}</h3>
+          <button class="fav-btn" type="button" title="즐겨찾기" aria-label="즐겨찾기">${starIcon()}</button>
+        </div>
+        <p class="desc">${s.desc}</p>
+        <div class="links">
+          <a class="link-btn" href="${s.url}" target="_blank" rel="noopener noreferrer">
+            <span class="lbl">${domainOf(s.url)} 방문</span>${externalIcon()}
+          </a>
+          ${guideHtml}
+        </div>
+      </div>`;
+
+    card.querySelector(".fav-btn").addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFav(s.id);
+    });
+
+    cardMap[s.id] = card;
+    return card;
+  }
+
+  function orderedSites() {
+    const favSites = favs
+      .map(id => SITES.find(s => s.id === id))
+      .filter(Boolean);
+    const rest = SITES.filter(s => !favs.includes(s.id));
+    return [...favSites, ...rest];
+  }
+
+  function reorder() {
+    orderedSites().forEach(s => grid.appendChild(cardMap[s.id]));
+  }
+
+  function toggleFav(id) {
+    if (favs.includes(id)) {
+      favs = favs.filter(x => x !== id);
+      cardMap[id].classList.remove("fav");
+    } else {
+      favs = [id, ...favs];
+      cardMap[id].classList.add("fav");
+    }
+    saveFavs(favs);
+    reorder();
+    applyFilter();
+  }
+
+  function render() {
+    SITES.forEach(s => grid.appendChild(buildCard(s)));
+    reorder();
+    applyFilter();
+  }
+
+  function buildFilters() {
+    const present = new Set(SITES.map(s => s.cat));
+    const cats = CAT_ORDER.filter(c => c === "전체" || present.has(c));
+    filtersEl.innerHTML = cats.map(c =>
+      `<button class="chip ${c === "전체" ? "active" : ""}" data-cat="${c}">${c}</button>`
+    ).join("");
+    filtersEl.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        filtersEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeCat = chip.dataset.cat;
+        applyFilter();
+      });
+    });
+  }
+
+  function applyFilter() {
+    const q = searchEl.value.trim().toLowerCase();
+    let visible = 0;
+    grid.querySelectorAll(".card").forEach(card => {
+      const matchCat = activeCat === "전체" || card.dataset.cat === activeCat;
+      const matchSearch = !q || card.dataset.search.includes(q);
+      const show = matchCat && matchSearch;
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+    noResults.style.display = visible === 0 ? "block" : "none";
+  }
+
+  // View toggle
+  const viewToggle = document.getElementById("viewToggle");
+  viewToggle.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      viewToggle.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      grid.classList.toggle("list-view", btn.dataset.view === "list");
+    });
+  });
+
+  // Theme toggle
+  const themeToggle = document.getElementById("themeToggle");
+  function applyTheme(t) {
+    document.body.classList.toggle("light", t === "light");
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  themeToggle.addEventListener("click", () => {
+    const isLight = document.body.classList.toggle("light");
+    try { localStorage.setItem(THEME_KEY, isLight ? "light" : "dark"); } catch {}
+  });
+
+  searchEl.addEventListener("input", applyFilter);
+  buildFilters();
+  render();
+</script>
+</body>
+</html>
