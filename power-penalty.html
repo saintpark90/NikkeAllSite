@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>전투력 패널티 계산 · 니케</title>
+<meta name="description" content="기준 전투력과 내 전투력을 입력하면 투력 차이에 따른 스탯 패널티를 자동으로 계산합니다." />
+<style>
+  :root {
+    --bg: #0b0e16;
+    --bg-soft: #121726;
+    --card: #161c2d;
+    --border: #283149;
+    --text: #e8ecf6;
+    --text-dim: #97a1bb;
+    --text-faint: #6b748f;
+    --accent: #5b8cff;
+    --accent-2: #c46bff;
+    --accent-glow: rgba(91, 140, 255, 0.35);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --radius: 16px;
+    --h1-grad: linear-gradient(90deg, #fff 0%, #b9c6ff 50%, #e6c2ff 100%);
+    --danger: #ff6b6b;
+    --ok: #5bffc8;
+  }
+  body.light {
+    --bg: #eef1f8;
+    --bg-soft: #ffffff;
+    --card: #ffffff;
+    --border: #e0e5f0;
+    --text: #1a2236;
+    --text-dim: #586079;
+    --text-faint: #8b94ac;
+    --accent: #3f6fe0;
+    --accent-2: #a64bff;
+    --accent-glow: rgba(63, 111, 224, 0.25);
+    --shadow: 0 10px 28px rgba(20, 30, 60, 0.1);
+    --h1-grad: linear-gradient(90deg, #1a2236 0%, #3f6fe0 55%, #a64bff 100%);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(196, 107, 255, 0.18), transparent 60%),
+      radial-gradient(900px 500px at -5% 0%, rgba(91, 140, 255, 0.18), transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle .moon { display: none; }
+  body.light .theme-toggle .moon { display: block; }
+  body.light .theme-toggle .sun { display: none; }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .back:hover { color: var(--accent); }
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: var(--h1-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub {
+    margin: 0 0 28px;
+    color: var(--text-dim);
+    font-size: 14.5px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field input::placeholder { color: var(--text-faint); font-weight: 400; }
+  .formula {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: -6px 0 20px;
+    padding: 10px 12px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    border: 1px dashed var(--border);
+  }
+  .formula code {
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .result-box {
+    padding: 18px 16px;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .result-box .lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+  }
+  .result-box .val {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .result-box.diff .val { color: var(--accent); }
+  .result-box.penalty .val { color: var(--accent-2); }
+  .result-box.empty .val { color: var(--text-faint); font-size: 20px; }
+  .warn {
+    margin-top: 14px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--danger);
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    border-radius: 8px;
+  }
+  .ok-msg {
+    margin-top: 14px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ok);
+    background: rgba(91, 255, 200, 0.08);
+    border: 1px solid rgba(91, 255, 200, 0.25);
+    border-radius: 8px;
+  }
+  details.table-wrap {
+    margin-top: 8px;
+  }
+  details.table-wrap summary {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 12px 0;
+    user-select: none;
+  }
+  details.table-wrap summary:hover { color: var(--accent); }
+  .table-scroll {
+    max-height: 320px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 8px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    position: sticky;
+    top: 0;
+    background: var(--card);
+    font-weight: 600;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  td:first-child, th:first-child { text-align: left; }
+  tr.highlight td {
+    background: rgba(91, 140, 255, 0.15);
+    font-weight: 700;
+  }
+  tr:last-child td { border-bottom: none; }
+  footer {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12px;
+    margin-top: 32px;
+  }
+  @media (max-width: 480px) {
+    .result-grid { grid-template-columns: 1fr; }
+    .result-box .val { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" title="라이트/다크 모드" aria-label="테마 전환">
+    <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg>
+    <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <div class="wrap">
+    <h1>전투력 패널티 계산</h1>
+    <p class="sub">기준 전투력과 내 전투력을 입력하면 투력 차이와 적용 스탯 패널티를 자동으로 계산합니다.</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="refPower">기준 전투력</label>
+        <input id="refPower" type="text" inputmode="numeric" placeholder="예: 1,588,326" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="myPower">내 전투력</label>
+        <input id="myPower" type="text" inputmode="numeric" placeholder="예: 1,024,678" autocomplete="off" />
+      </div>
+      <p class="formula">
+        투력 차이(%) = <code>(기준 전투력 − 내 전투력) ÷ 기준 전투력 × 100</code>
+      </p>
+
+      <div class="result-grid">
+        <div class="result-box diff" id="diffBox">
+          <div class="lbl">투력 차이</div>
+          <div class="val" id="diffVal">—</div>
+        </div>
+        <div class="result-box penalty" id="penaltyBox">
+          <div class="lbl">스탯 패널티</div>
+          <div class="val" id="penaltyVal">—</div>
+        </div>
+      </div>
+      <div id="msg"></div>
+    </div>
+
+    <details class="table-wrap card">
+      <summary>투력 차이 · 스탯 패널티 표 (501단계)</summary>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>투력 차이</th><th>스탯 패널티</th></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </details>
+
+    <footer>니케 유용한 사이트 모음 · 전투력 패널티 계산기</footer>
+  </div>
+
+<script src="penalty-data.js"></script>
+<script>
+  const refEl = document.getElementById("refPower");
+  const myEl = document.getElementById("myPower");
+  const diffVal = document.getElementById("diffVal");
+  const penaltyVal = document.getElementById("penaltyVal");
+  const msgEl = document.getElementById("msg");
+  const tableBody = document.getElementById("tableBody");
+
+  function parseNum(str) {
+    const n = Number(String(str).replace(/[^\d]/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  }
+  function formatNum(n) {
+    return n.toLocaleString("ko-KR");
+  }
+  function formatPct(n, digits = 2) {
+    return n.toFixed(digits) + "%";
+  }
+
+  function getPenalty(diffPercent) {
+    if (diffPercent <= 0) return 0;
+    for (let i = 0; i < PENALTY_TABLE.length; i++) {
+      const [d, p] = PENALTY_TABLE[i];
+      if (diffPercent >= d) return p;
+    }
+    return 0;
+  }
+
+  function getMatchedDiff(diffPercent) {
+    if (diffPercent <= 0) return 0;
+    for (let i = 0; i < PENALTY_TABLE.length; i++) {
+      const [d] = PENALTY_TABLE[i];
+      if (diffPercent >= d) return d;
+    }
+    return 0;
+  }
+
+  function buildTable() {
+    tableBody.innerHTML = PENALTY_TABLE.map(([d, p]) =>
+      `<tr data-diff="${d}"><td>${formatPct(d)}</td><td>${formatPct(p)}</td></tr>`
+    ).join("");
+  }
+
+  function highlightRow(matchedDiff) {
+    tableBody.querySelectorAll("tr").forEach(tr => {
+      tr.classList.toggle("highlight", Number(tr.dataset.diff) === matchedDiff);
+    });
+  }
+
+  function calc() {
+    const ref = parseNum(refEl.value);
+    const my = parseNum(myEl.value);
+    msgEl.innerHTML = "";
+    msgEl.className = "";
+
+    if (!ref || !my) {
+      diffVal.textContent = "—";
+      penaltyVal.textContent = "—";
+      highlightRow(-1);
+      return;
+    }
+
+    if (my > ref) {
+      diffVal.textContent = "0.00%";
+      penaltyVal.textContent = "0.00%";
+      msgEl.className = "ok-msg";
+      msgEl.textContent = "내 전투력이 기준 이상이므로 패널티가 없습니다.";
+      highlightRow(0);
+      return;
+    }
+
+    if (my === ref) {
+      diffVal.textContent = "0.00%";
+      penaltyVal.textContent = "0.00%";
+      msgEl.className = "ok-msg";
+      msgEl.textContent = "기준 전투력과 동일합니다. 패널티가 없습니다.";
+      highlightRow(0);
+      return;
+    }
+
+    const diff = (ref - my) / ref * 100;
+    const matchedDiff = getMatchedDiff(diff);
+    const penalty = getPenalty(diff);
+
+    diffVal.textContent = formatPct(diff);
+    penaltyVal.textContent = formatPct(penalty);
+    highlightRow(matchedDiff);
+
+    if (diff > 49.91) {
+      msgEl.className = "warn";
+      msgEl.textContent = "투력 차이가 표 기준(49.91%)을 초과합니다. 최대 패널티(90.00%)가 적용됩니다.";
+    }
+  }
+
+  function onInput(el) {
+    const raw = parseNum(el.value);
+    if (raw > 0) el.value = formatNum(raw);
+    calc();
+  }
+
+  refEl.addEventListener("input", () => onInput(refEl));
+  myEl.addEventListener("input", () => onInput(myEl));
+
+  buildTable();
+  calc();
+
+  const THEME_KEY = "nikke_theme";
+  const themeToggle = document.getElementById("themeToggle");
+  function applyTheme(t) {
+    document.body.classList.toggle("light", t === "light");
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  themeToggle.addEventListener("click", () => {
+    const isLight = document.body.classList.toggle("light");
+    try { localStorage.setItem(THEME_KEY, isLight ? "light" : "dark"); } catch {}
+  });
+</script>
+</body>
+</html>

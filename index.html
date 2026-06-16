@@ -134,6 +134,23 @@
   }
   .hero .stats b { color: var(--accent-2); }
 
+  .fav-hint {
+    margin: 0 auto 20px;
+    max-width: 640px;
+    padding: 10px 16px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.55;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .fav-hint .star {
+    color: #f5b942;
+    font-weight: 700;
+  }
+
   /* ===== Controls ===== */
   .controls {
     position: sticky;
@@ -518,6 +535,8 @@
       </div>
     </div>
 
+    <p class="fav-hint">카드 오른쪽의 <span class="star">★</span> 아이콘을 클릭하면 원하는 사이트를 상단에 고정할 수 있습니다. <br/> 고정한 순서는 새로고침 후에도 유지됩니다.</p>
+
     <div class="grid" id="grid"></div>
     <div class="no-results" id="noResults">검색 결과가 없습니다.</div>
   </div>
@@ -529,86 +548,96 @@
 
 <script>
   const SITES = [
-    { n: 1, cat: "시뮬레이션", title: "오버로드 모듈작 시뮬레이션",
+    { cat: "종합", title: "레츠도로 (Let's Doro)",
+      desc: "니마갤 기반 니케 공략 가이드, 솔로레이드 덱빌더, 협동작전 파티 모집 기능을 제공하는 종합 사이트.",
+      url: "https://letsdoro.com/" },
+    { cat: "정보", title: "에덴", noThumb: true,
+      desc: "니케 아카라이브 협동작전 사이트. 협전기간 아닐시 OFF 상태일 수 있음.",
+      url: "https://nikke-eden.site/",
+      guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/157967683" } },
+    { cat: "시뮬레이션", title: "오버로드 모듈작 시뮬레이션",
       desc: "오버로드 장비 강화 결과를 미리 돌려보는 시뮬레이터. 어떤 옵션을 노릴지 감각을 익히기 좋음.",
       url: "https://nikkemodule.vercel.app/" },
-    { n: 2, cat: "시뮬레이션", title: "오버로드 최적화 (syuen.love)",
+    { cat: "시뮬레이션", title: "오버로드 최적화 (syuen.love)",
       desc: "보유 장비의 옵션 조합을 분석해 가장 효율적인 오버로드 강화 경로를 제시.",
       url: "https://syuen.love/",
       guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/171042301" } },
-    { n: 3, cat: "계산기", title: "NIKKE Deck (종합 덱 빌더)",
+    { cat: "계산기", title: "NIKKE Deck (종합 덱 빌더)",
       desc: "팀 편성, 버스트 사이클, 데미지 계산을 한 번에 다루는 종합 계산 사이트. 니케 유저들이 가장 폭넓게 사용하는 도구 중 하나.",
       url: "https://nikke-deck.com/",
       guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/126142016" } },
-    { n: 4, cat: "성장", title: "니케 툴즈 (NIKKE Tools)",
+    { cat: "성장", title: "니케 툴즈 (NIKKE Tools)",
       desc: "솔로 레이드용 5개 덱을 동시에 구성하고 컷라인을 가늠할 수 있는 다용도 툴. 레이드 준비와 자원 배분 계획에 유용.",
       url: "https://nikke-tools.netlify.app/" },
-    { n: 5, cat: "랭킹", title: "에닉 (enikk) · 랭커 벤치마크",
+    { cat: "랭킹", title: "에닉 (enikk) · 랭커 벤치마크",
       desc: "솔로·유니온 레이드 상위 랭커들의 실제 조합과 딜량을 열람할 수 있는 사이트. 고점 세팅을 참고해 내 편성을 다듬기 좋음.",
       url: "https://enikk.app/" },
-    { n: 6, cat: "종합", title: "Prydwen (종합 공략·티어)", noThumb: true,
+    { cat: "종합", title: "Prydwen (종합 공략·티어)", noThumb: true,
       desc: "캐릭터 티어 평가, 빌드, 공략을 깔끔하게 정리한 해외 종합 가이드. 신규·복귀 유저가 큰 그림을 잡기에 가장 좋은 출발점.",
       url: "https://www.prydwen.gg/nikke" },
-    { n: 7, cat: "정보", title: "상담 족보 사이트",
+    { cat: "정보", title: "상담 족보 사이트",
       desc: "캐릭터별 추천 세팅과 궁합을 정리한 상담 족보. 최신 픽업을 상단에 노출해줘 빠르게 찾아보기 좋음.",
       url: "https://wiki3.jp/nikke/page/217" },
-    { n: 8, cat: "DB", title: "니케 DB (Visualiser)",
+    { cat: "DB", title: "니케 DB (Visualiser)",
       desc: "캐릭터 라이브2D, 일러스트, 번역된 4컷 만화 등 게임 리소스를 열람하고 고화질로 내려받을 수 있는 데이터베이스 뷰어.",
       url: "https://nikke-db.pages.dev/visualiser" },
-    { n: 9, cat: "계산기", title: "스레나 프레임 계산 (PVP)",
+    { cat: "계산기", title: "스레나 프레임 계산 (PVP)",
       desc: "아레나 전투를 프레임 단위로 비교 분석하는 PVP 특화 계산기. 속도 싸움이 치열한 대인전 세팅에 사실상 필수.",
       url: "https://nikke.top/" },
-    { n: 10, cat: "시뮬레이션", title: "신데렐라·라피 딜량 계산",
+    { cat: "계산기", title: "전투력 패널티 계산기",
+      desc: "기준 전투력과 내 전투력을 입력하면 투력 차이(%)와 적용 스탯 패널티를 자동으로 계산. 협동작전·레이드 컷라인 확인에 유용.",
+      url: "power-penalty.html" },
+    { cat: "시뮬레이션", title: "신데렐라·라피 딜량 계산",
       desc: "오버로드 수치를 입력해 화력형 캐릭터의 실제 딜과 장탄·재장전을 시뮬레이션. 크뎀↔크확 같은 옵션 변경 효율을 비교하는 데 유용.",
       url: "https://nikke-fire-simulation.vercel.app/" },
-    { n: 11, cat: "성장", title: "소장품 강화 최적화 (syuen)",
+    { cat: "성장", title: "애장품 계산기 (소장품 강화 최적화 · syuen)",
       desc: "보유 소장품 비율을 유지하며 강화하는 최적 경로를 계산. 장기적인 자원 운용 관점에서 직관적이고 활용도가 높음.",
       url: "https://syuen.love/doll/",
       guide: { label: "제작자 챈 요약 / 행동강령", url: "https://arca.live/b/nikketgv/128411014" } },
-    { n: 12, cat: "정보", title: "니케 스킬·픽업 검색",
+    { cat: "정보", title: "니케 스킬·픽업 검색",
       desc: "스킬 검색은 물론 역대 픽업 캐릭터의 분포와 출시 시기를 빠르게 파악할 수 있는 자료형 사이트.",
       url: "https://nikkesearch.glide.page/dl/da19fa" },
-    { n: 13, cat: "정보", title: "스킬검색 위키 (Skill Wiki)",
+    { cat: "정보", title: "스킬검색 위키 (Skill Wiki)",
       desc: "캐릭터 스킬을 키워드로 찾아보기 쉽게 정리한 위키. 인게임 검색보다 직관적이라 입문자에게 추천.",
       url: "https://nikkeskillwiki.com/MainHome/" },
-    { n: 14, cat: "계산기", title: "델 빌딩 사이트 (Mimir)",
+    { cat: "계산기", title: "덱 빌딩 사이트 (Mimir)",
       desc: "레이드 덱 구성과 애장품 미란다 버프 적용 여부를 계산해주는 도구. 계정 연동 시 자동 분석, 수동 입력도 가능.",
       url: "https://nikkemimir.xyz/" },
-    { n: 15, cat: "종합", title: "nikke.gg (종합 정보)",
+    { cat: "종합", title: "nikke.gg (종합 정보)",
       desc: "캐릭터 정보, 티어, 가이드를 폭넓게 제공하는 해외 종합 정보 사이트. 다양한 자료를 한 곳에서 확인 가능.",
       url: "https://nikke.gg/" },
-    { n: 16, cat: "성장", title: "코더 수급량 사이트",
+    { cat: "성장", title: "코더 계산기 (코더 수급량 사이트)",
       desc: "전초기지 코어더스트 수급 효율을 단계별로 정리한 성장 참고 자료. 단기 섬멸 기준으로 성장 계획을 세우는 데 도움.",
       url: "https://nikkeoutpost.netlify.app/",
       guide: { label: "관련 챈 글", url: "https://arca.live/b/nikketgv/160379444" } },
-    { n: 17, cat: "시뮬레이션", title: "종합 가챠·확률 시뮬 (ppopki)",
+    { cat: "시뮬레이션", title: "종합 가챠·확률 시뮬 (ppopki)",
       desc: "소장품 합성, 우월코드 뽑기, 오버로드 등 각종 확률 콘텐츠를 망라한 종합 시뮬레이션 사이트.",
       url: "https://ppopki.com/simulation/index.php" },
-    { n: 18, cat: "시뮬레이션", title: "픽업 가챠 시뮬 (nibung)",
+    { cat: "시뮬레이션", title: "픽업 가챠 시뮬 (nibung)",
       desc: "픽업 뽑기를 미리 돌려볼 수 있는 가챠 시뮬레이터. 가벼운 운 테스트용으로 적합.",
       url: "https://nibung.kr/gacha" },
-    { n: 19, cat: "계산기", title: "리버렐리오·흑련 버프 계산기",
+    { cat: "계산기", title: "리버렐리오·흑련 버프 계산기",
       desc: "리버렐리오 '차가운 수심' 차징 속도 버프 적용을 계산하는 전용 도구. 흑련의 공격력 수치 조정도 지원.",
       url: "https://milite-kim.github.io/-/" },
-    { n: 20, cat: "DB", title: "니케 DB 2 (NKAS)",
-      desc: "캐릭터 리소스를 열람하는 또 다른 데이터베이스. 게임 사운드트랙(OST) 감상을 함께 제공하는 점이 특징.",
+    { cat: "DB", title: "니케 DB (NKAS)",
+      desc: "캐릭터 리소스를 열람하는 데이터베이스. 게임 사운드트랙(OST) 감상을 함께 제공하는 점이 특징.",
       url: "https://nkas.pages.dev/" },
-    { n: 21, cat: "성장", title: "소장품 강화 최적화 (changjoeconomy)",
+    { cat: "성장", title: "소장품 강화 최적화 (changjoeconomy)",
       desc: "보유 소장품 개수를 기반으로 강화 루트를 계산해주는 도구. 11번 사이트의 대안으로 함께 비교해볼 만함.",
       url: "https://changjoeconomy.github.io/collectibles/" },
-    { n: 22, cat: "시트", title: "유레 결산시트",
+    { cat: "시트", title: "유레 결산시트",
       desc: "유니온 레이드 결과를 집계·정리하는 구글 시트 템플릿. 사본을 만들어 유니온 결산 관리에 활용.",
       url: "https://docs.google.com/spreadsheets/d/1GuV-FywoN0CjeVoY4p3yfzxel15Mt8TsyhfT6b2XonA/edit?gid=737872758#gid=737872758" },
-    { n: 23, cat: "위키", title: "니케 팬덤 위키", noThumb: true,
+    { cat: "위키", title: "니케 팬덤 위키", noThumb: true,
       desc: "스토리와 캐릭터 설정을 영어로 정리한 글로벌 팬덤 위키. 세계관·서사 자료를 찾을 때 유용.",
       url: "https://nikke-goddess-of-victory-international.fandom.com/wiki/Home" },
-    { n: 24, cat: "유틸", title: "임시 이메일 (temp-mail)", noThumb: true,
+    { cat: "유틸", title: "임시 이메일 (temp-mail)", noThumb: true,
       desc: "리세마라 시 빠르게 쓸 수 있는 1회용 이메일 서비스. 직관적인 UI로 사용이 간편함.",
       url: "https://temp-mail.org/ko" },
-    { n: 25, cat: "유틸", title: "임시 이메일 (kuku.lu)",
+    { cat: "유틸", title: "임시 이메일 (kuku.lu)",
       desc: "리세마라용 임시 이메일 서비스. 여러 주소를 받아 계정 생성에 활용할 수 있음.",
       url: "https://m.kuku.lu/ko.php" },
-    { n: 26, cat: "정보", title: "유실물 정리 (GameWith)",
+    { cat: "정보", title: "유실물 정리 (GameWith)",
       desc: "이벤트 유실물 등 일부 콘텐츠 정보를 정리한 일본 공략 페이지. 번역기로 참고하는 용도.",
       url: "https://gamewith.jp/nikke/article/show/370147" }
   ];
@@ -617,6 +646,7 @@
 
   const FAV_KEY = "nikke_favs";
   const THEME_KEY = "nikke_theme";
+  const VIEW_KEY = "nikke_view";
 
   function loadFavs() {
     try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
@@ -637,7 +667,46 @@
   document.getElementById("totalCount").textContent = new Set(SITES.map(s => s.cat)).size;
 
   const CAT_ORDER = ["전체", "계산기", "시뮬레이션", "성장", "DB", "위키", "정보", "랭킹", "시트", "종합", "유틸"];
+  const DEFAULT_TOP_ORDER = [
+    "https://letsdoro.com/",
+    "https://nikkemodule.vercel.app/",
+    "https://nikkeoutpost.netlify.app/",
+    "https://syuen.love/doll/"
+  ];
+  const EDEN_URL = "https://nikke-eden.site/";
+  const EDEN_DEFAULT_POSITION = 6;
+  const PENALTY_URL = "power-penalty.html";
+  const PENALTY_DEFAULT_POSITION = 10;
   let activeCat = "전체";
+
+  function defaultOrder() {
+    const topSites = DEFAULT_TOP_ORDER
+      .map(url => SITES.find(s => s.url === url))
+      .filter(Boolean);
+    const withoutTop = SITES.filter(s => !DEFAULT_TOP_ORDER.includes(s.url));
+    const pinnedUrls = [EDEN_URL, PENALTY_URL];
+    const withoutPinned = withoutTop.filter(s => !pinnedUrls.includes(s.url));
+    const baseOrder = [
+      ...topSites,
+      ...withoutPinned
+    ];
+    function insertPinned(url, position) {
+      const site = withoutTop.find(s => s.url === url);
+      if (site) {
+        const idx = Math.max(0, Math.min(position - 1, baseOrder.length));
+        baseOrder.splice(idx, 0, site);
+      }
+    }
+    insertPinned(EDEN_URL, EDEN_DEFAULT_POSITION);
+    insertPinned(PENALTY_URL, PENALTY_DEFAULT_POSITION);
+    return baseOrder;
+  }
+
+  function assignNumbers() {
+    defaultOrder().forEach((s, idx) => { s.n = idx + 1; });
+  }
+
+  assignNumbers();
 
   function domainOf(url) {
     try { return new URL(url).hostname.replace(/^www\./, ""); }
@@ -665,14 +734,15 @@
         <span class="lbl">📖 ${s.guide.label}</span>${externalIcon()}
       </a>` : "";
 
-    const thumbInner = s.noThumb ? "" : `
+    const isThumbBlank = Boolean(s.noThumb || s.off);
+    const thumbInner = isThumbBlank ? "" : `
         <div class="skeleton"></div>
         <img loading="lazy" src="${thumbUrl(s.url)}" alt="${s.title} 썸네일"
              onload="this.classList.add('loaded'); const sk=this.parentNode.querySelector('.skeleton'); if(sk) sk.remove();"
              onerror="this.style.display='none'; const sk=this.parentNode.querySelector('.skeleton'); if(sk) sk.remove();" />`;
 
     card.innerHTML = `
-      <a class="thumb${s.noThumb ? " blank" : ""}" href="${s.url}" target="_blank" rel="noopener noreferrer">
+      <a class="thumb${isThumbBlank ? " blank" : ""}" href="${s.url}" target="_blank" rel="noopener noreferrer">
         ${thumbInner}
         <div class="open-hint">${externalIcon()} 사이트 열기</div>
         <span class="num-badge">${s.n}</span>
@@ -703,10 +773,11 @@
   }
 
   function orderedSites() {
+    const baseOrder = defaultOrder();
     const favSites = favs
-      .map(id => SITES.find(s => s.id === id))
+      .map(id => baseOrder.find(s => s.id === id))
       .filter(Boolean);
-    const rest = SITES.filter(s => !favs.includes(s.id));
+    const rest = baseOrder.filter(s => !favs.includes(s.id));
     return [...favSites, ...rest];
   }
 
@@ -764,11 +835,18 @@
 
   // View toggle
   const viewToggle = document.getElementById("viewToggle");
+  function applyView(view) {
+    const isList = view === "list";
+    grid.classList.toggle("list-view", isList);
+    viewToggle.querySelectorAll("button").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.view === (isList ? "list" : "grid"));
+    });
+  }
+  applyView(localStorage.getItem(VIEW_KEY) || "grid");
   viewToggle.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", () => {
-      viewToggle.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      grid.classList.toggle("list-view", btn.dataset.view === "list");
+      applyView(btn.dataset.view);
+      try { localStorage.setItem(VIEW_KEY, btn.dataset.view); } catch {}
     });
   });
 
