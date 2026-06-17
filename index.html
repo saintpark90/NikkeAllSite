@@ -686,13 +686,104 @@
   }
 
   footer {
-    text-align: center;
+    margin-top: 48px;
+    padding: 0 20px 48px;
     color: var(--text-faint);
     font-size: 12.5px;
-    padding: 40px 20px 0;
-    line-height: 1.8;
+    line-height: 1.75;
+    text-align: center;
   }
-  footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; }
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px 4px;
+    margin-bottom: 12px;
+  }
+  .footer-sep {
+    color: var(--border);
+    user-select: none;
+  }
+  .footer-link {
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-link:hover {
+    color: var(--accent-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .footer-meta {
+    color: var(--text-faint);
+    font-size: 12px;
+    margin: 0;
+  }
+  .footer-alert-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+  }
+  .footer-alert-overlay[hidden] { display: none; }
+  .footer-alert {
+    width: min(100%, 420px);
+    max-height: min(80vh, 520px);
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+  .footer-alert-title {
+    margin: 0;
+    padding: 16px 18px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-alert-body {
+    padding: 14px 18px;
+    overflow-y: auto;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .footer-alert-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .footer-alert-btn {
+    margin: 0 18px 16px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .footer-alert-btn:hover { opacity: 0.9; }
 
   @media (max-width: 640px) {
     .controls.is-scrolled {
@@ -788,9 +879,27 @@
   </div>
 
   <footer>
-    개인 정리용 모음 페이지 · 썸네일은 자동 캡처되며 실제 사이트와 다를 수 있습니다.<br />
-    각 사이트의 저작권은 해당 제작자에게 있습니다.
+    <nav class="footer-nav" aria-label="사이트 정보">
+      <button type="button" class="footer-link" data-footer="copyright">저작권 고지</button>
+      <span class="footer-sep" aria-hidden="true">·</span>
+      <a class="footer-link" href="https://docs.google.com/forms/d/e/1FAIpQLSdEO9QALN8ORNE-HfkDNBrUuQATHo5XCw-kU5yLyKPE7Idc5A/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">Contact</a>
+      <span class="footer-sep" aria-hidden="true">·</span>
+      <button type="button" class="footer-link" data-footer="guide">사용 설명서</button>
+      <span class="footer-sep" aria-hidden="true">·</span>
+      <button type="button" class="footer-link" data-footer="changelog">업데이트 로그</button>
+      <span class="footer-sep" aria-hidden="true">·</span>
+      <button type="button" class="footer-link" data-footer="tech">기술 스택</button>
+    </nav>
+    <p class="footer-meta">NIKKE ALL SITE — 승리의 여신: 니케 유용한 사이트 모음</p>
   </footer>
+
+  <div class="footer-alert-overlay" id="footerAlert" hidden>
+    <div class="footer-alert" role="alertdialog" aria-modal="true" aria-labelledby="footerAlertTitle">
+      <h4 class="footer-alert-title" id="footerAlertTitle"></h4>
+      <div class="footer-alert-body" id="footerAlertBody"></div>
+      <button type="button" class="footer-alert-btn" id="footerAlertClose">확인</button>
+    </div>
+  </div>
 
 <script>
   const SITES = [
@@ -1225,6 +1334,61 @@
   sideOverlay.addEventListener("click", closeSideMenu);
   document.addEventListener("keydown", e => {
     if (e.key === "Escape" && document.body.classList.contains("menu-open")) closeSideMenu();
+    if (e.key === "Escape" && !footerAlert.hidden) closeFooterAlert();
+  });
+
+  // Footer info alerts — UPDATE_LOG: 배포 시 FOOTER_INFO.changelog 갱신
+  const FOOTER_INFO = {
+    copyright: {
+      title: "저작권 고지 (Copyright & Disclaimer)",
+      body: "© 2026 SaintPark. All rights reserved.\n\n면책 조항: This site is not affiliated with SHIFT UP Corp. or Level Infinite. All game assets are the property of their respective owners.\n(이 사이트는 시프트업 또는 레벨 인피니트와 관계가 없으며, 모든 게임 자산은 각 소유자의 자산입니다.)\n\n썸네일은 자동 캡처되며 실제 사이트와 다를 수 있습니다. 링크된 외부 사이트의 저작권은 해당 제작자에게 있습니다."
+    },
+    guide: {
+      title: "사용 설명서",
+      body: "· 검색 — 상단 검색창에서 사이트 이름·설명·URL로 필터링\n· 카테고리 — 여러 카테고리를 동시에 선택 가능. 전체 클릭 시 선택 해제\n· 격자 / 목록 — 카드형 또는 한 줄 목록형으로 전환\n· 즐겨찾기 ★ — 카드 또는 왼쪽 메뉴에서 클릭 시 상단 고정 (새로고침 후에도 유지)\n· 왼쪽 메뉴 三 — 전체 사이트를 가나다순으로 빠르게 탐색\n· 테마 — 우측 상단 버튼으로 라이트/다크 모드 전환"
+    },
+    changelog: {
+      title: "최종 업데이트 · 2026.06.17",
+      body: "· 레츠도로, 에덴, 투력 패널티 계산기 추가\n· 오타 수정\n· 왼쪽 슬라이딩 메뉴 추가\n· 공식 사이트들 추가\n· Vercel Web Analytics 연동\n· footer 정보·사용 설명서·업데이트 로그 추가\n· footer 링크·알럿 모달 방식으로 변경"
+    },
+    tech: {
+      title: "기술 스택",
+      html: 'Built with HTML, CSS &amp; JavaScript · Hosted on <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a> &amp; <a href="https://pages.github.com" target="_blank" rel="noopener noreferrer">GitHub Pages</a>'
+    }
+  };
+
+  const footerAlert = document.getElementById("footerAlert");
+  const footerAlertTitle = document.getElementById("footerAlertTitle");
+  const footerAlertBody = document.getElementById("footerAlertBody");
+  const footerAlertClose = document.getElementById("footerAlertClose");
+
+  function openFooterAlert(key) {
+    const info = FOOTER_INFO[key];
+    if (!info) return;
+    footerAlertTitle.textContent = info.title;
+    if (info.html) {
+      footerAlertBody.innerHTML = info.html;
+      footerAlertBody.style.whiteSpace = "normal";
+    } else {
+      footerAlertBody.textContent = info.body;
+      footerAlertBody.style.whiteSpace = "pre-wrap";
+    }
+    footerAlert.hidden = false;
+    footerAlertClose.focus();
+  }
+
+  function closeFooterAlert() {
+    footerAlert.hidden = true;
+    footerAlertBody.textContent = "";
+    footerAlertBody.innerHTML = "";
+  }
+
+  document.querySelectorAll(".footer-link[data-footer]").forEach(btn => {
+    btn.addEventListener("click", () => openFooterAlert(btn.dataset.footer));
+  });
+  footerAlertClose.addEventListener("click", closeFooterAlert);
+  footerAlert.addEventListener("click", e => {
+    if (e.target === footerAlert) closeFooterAlert();
   });
 
   buildFilters();

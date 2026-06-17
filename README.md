@@ -79,6 +79,17 @@ npx serve .
 
 썸네일 캡처가 실패하는 사이트는 `noThumb: true`를 추가할 수 있습니다.
 
+## 업데이트 로그 (배포 시 갱신)
+
+GitHub에 배포할 때마다 `index.html` 스크립트의 `FOOTER_INFO.changelog` 객체를 함께 수정합니다.
+
+```js
+changelog: {
+  title: "최종 업데이트 · YYYY.MM.DD",
+  body: "· 변경 사항 1\n· 변경 사항 2"
+}
+```
+
 ## 면책
 
 이 프로젝트는 개인·커뮤니티 정리용 페이지이며, **SHIFT UP / Proxima Beta** 및 각 외부 사이트 제작자와 공식적으로 제휴된 것이 아닙니다.  
