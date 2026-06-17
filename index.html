@@ -105,6 +105,132 @@
     }
   }
 
+  /* ===== Side menu ===== */
+  .menu-toggle {
+    position: fixed;
+    top: 16px;
+    left: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .menu-toggle:hover { transform: scale(1.08); border-color: var(--accent); color: var(--accent); }
+
+  .side-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(8, 10, 18, 0.55);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  body.menu-open .side-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+  body.menu-open { overflow: hidden; }
+
+  .side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 70;
+    width: min(320px, 88vw);
+    height: 100vh;
+    height: 100dvh;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body.menu-open .side-menu { transform: translateX(0); }
+
+  .side-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid var(--border);
+    flex: none;
+  }
+  .side-menu-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .side-menu-close {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg-soft);
+    color: var(--text-dim);
+    font-size: 22px;
+    line-height: 1;
+    transition: all 0.16s ease;
+  }
+  .side-menu-close:hover { color: var(--text); border-color: var(--accent); }
+
+  .side-menu-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .side-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px 0 16px;
+    min-height: 44px;
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s ease;
+  }
+  .side-item:hover { background: var(--bg-soft); }
+  .side-item.fav { background: rgba(245, 185, 66, 0.06); }
+  .side-link {
+    flex: 1;
+    min-width: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 10px 0;
+    transition: color 0.15s ease;
+  }
+  .side-link:hover { color: var(--accent); }
+  .side-item .fav-btn {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+  }
+
   /* ===== Header ===== */
   header.hero {
     position: relative;
@@ -418,6 +544,8 @@
   .fav-btn svg { fill: none; stroke: currentColor; stroke-width: 2; }
   .card.fav .fav-btn { color: #f5b942; }
   .card.fav .fav-btn svg { fill: #f5b942; }
+  .side-item.fav .fav-btn { color: #f5b942; }
+  .side-item.fav .fav-btn svg { fill: #f5b942; }
 
   .body .desc {
     margin: 0 0 16px;
@@ -609,6 +737,17 @@
 </style>
 </head>
 <body>
+  <button class="menu-toggle" id="menuToggle" type="button" title="사이트 목록" aria-label="사이트 목록 열기" aria-expanded="false" aria-controls="sideMenu">三</button>
+
+  <div class="side-overlay" id="sideOverlay" hidden></div>
+  <aside class="side-menu" id="sideMenu" aria-hidden="true">
+    <div class="side-menu-header">
+      <h2>사이트 목록</h2>
+      <button class="side-menu-close" id="sideMenuClose" type="button" title="닫기" aria-label="메뉴 닫기">×</button>
+    </div>
+    <nav class="side-menu-list" id="sideMenuList"></nav>
+  </aside>
+
   <button class="theme-toggle" id="themeToggle" title="라이트/다크 모드 전환" aria-label="테마 전환">
     <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
     <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -655,96 +794,114 @@
 
 <script>
   const SITES = [
-    { cat: "종합", title: "레츠도로 (Let's Doro)",
+    { cat: "종합", title: "레츠도로 (Let's Doro)", menuName: "레츠도로",
       desc: "니마갤 기반 니케 공략 가이드, 솔로레이드 덱빌더, 협동작전 파티 모집 기능을 제공하는 종합 사이트.",
       url: "https://letsdoro.com/" },
-    { cat: "정보", title: "에덴", noThumb: true,
+    { cat: "공식", title: "니케 공식 사이트 (한국)", menuName: "니케 한국 사이트",
+      desc: "공식 한국어 홈페이지. 세계관, 캐릭터 소개, 갤러리, 공지 등 공식 자료를 확인할 수 있음.",
+      url: "https://nikke-kr.com/" },
+    { cat: "공식", title: "BlablaLink (공식 글로벌 커뮤니티)", menuName: "BlablaLink",
+      desc: "니케 공식 글로벌 커뮤니티. 계정 연동 기반으로 공지·이벤트·유저 소통을 제공.",
+      url: "https://www.blablalink.com/" },
+    { cat: "공식", title: "공식 네이버 게임 라운지", menuName: "네이버 라운지",
+      desc: "네이버 게임 공식 라운지. 공지, 이벤트, 유저 게시글 등 국내 공식 커뮤니티 허브.",
+      url: "https://game.naver.com/lounge/NIKKE_The_Goddess_of_Victory" },
+    { cat: "정보", title: "에덴", menuName: "에덴", noThumb: true,
       desc: "니케 아카라이브 협동작전 사이트. 협전기간 아닐시 OFF 상태일 수 있음.",
       url: "https://nikke-eden.site/",
       guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/157967683" } },
-    { cat: "시뮬레이션", title: "오버로드 모듈작 시뮬레이션",
+    { cat: "시뮬레이션", title: "오버로드 모듈작 시뮬레이션", menuName: "오버로드 모듈작 시뮬",
       desc: "오버로드 장비 강화 결과를 미리 돌려보는 시뮬레이터. 어떤 옵션을 노릴지 감각을 익히기 좋음.",
       url: "https://nikkemodule.vercel.app/" },
-    { cat: "시뮬레이션", title: "오버로드 최적화 (syuen.love)",
+    { cat: "시뮬레이션", title: "오버로드 최적화 (syuen.love)", menuName: "오버로드 최적화",
       desc: "보유 장비의 옵션 조합을 분석해 가장 효율적인 오버로드 강화 경로를 제시.",
       url: "https://syuen.love/",
       guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/171042301" } },
-    { cat: "계산기", title: "NIKKE Deck (종합 덱 빌더)",
+    { cat: "계산기", title: "NIKKE Deck (종합 덱 빌더)", menuName: "NIKKE Deck",
       desc: "팀 편성, 버스트 사이클, 데미지 계산을 한 번에 다루는 종합 계산 사이트. 니케 유저들이 가장 폭넓게 사용하는 도구 중 하나.",
       url: "https://nikke-deck.com/",
       guide: { label: "사용법 챈 공략", url: "https://arca.live/b/nikketgv/126142016" } },
-    { cat: "성장", title: "니케 툴즈 (NIKKE Tools)",
+    { cat: "성장", title: "니케 툴즈 (NIKKE Tools)", menuName: "NIKKE Tools",
       desc: "솔로 레이드용 5개 덱을 동시에 구성하고 컷라인을 가늠할 수 있는 다용도 툴. 레이드 준비와 자원 배분 계획에 유용.",
       url: "https://nikke-tools.netlify.app/" },
-    { cat: "랭킹", title: "에닉 (enikk) · 랭커 벤치마크",
+    { cat: "랭킹", title: "에닉 (enikk) · 랭커 벤치마크", menuName: "에닉",
       desc: "솔로·유니온 레이드 상위 랭커들의 실제 조합과 딜량을 열람할 수 있는 사이트. 고점 세팅을 참고해 내 편성을 다듬기 좋음.",
       url: "https://enikk.app/" },
-    { cat: "종합", title: "Prydwen (종합 공략·티어)", noThumb: true,
+    { cat: "종합", title: "Prydwen (종합 공략·티어)", menuName: "Prydwen", noThumb: true,
       desc: "캐릭터 티어 평가, 빌드, 공략을 깔끔하게 정리한 해외 종합 가이드. 신규·복귀 유저가 큰 그림을 잡기에 가장 좋은 출발점.",
       url: "https://www.prydwen.gg/nikke" },
-    { cat: "정보", title: "상담 족보 사이트",
+    { cat: "종합", title: "Loot & Waifus (팀 빌더·티어)", menuName: "Loot & Waifus",
+      desc: "영문 종합 사이트. 스쿼드 덱 빌더, 티어 리스트, 캐릭터 스킬·별 정보와 각종 공략을 제공. 한글 미지원.",
+      url: "https://lootandwaifus.com/nikke-team-builder/" },
+    { cat: "정보", title: "상담 족보 사이트", menuName: "상담 족보 (위키)",
       desc: "캐릭터별 추천 세팅과 궁합을 정리한 상담 족보. 최신 픽업을 상단에 노출해줘 빠르게 찾아보기 좋음.",
       url: "https://wiki3.jp/nikke/page/217" },
-    { cat: "DB", title: "니케 DB (Visualiser)",
+    { cat: "DB", title: "니케 DB (Visualiser)", menuName: "Visualiser",
       desc: "캐릭터 라이브2D, 일러스트, 번역된 4컷 만화 등 게임 리소스를 열람하고 고화질로 내려받을 수 있는 데이터베이스 뷰어.",
       url: "https://nikke-db.pages.dev/visualiser" },
-    { cat: "계산기", title: "스레나 프레임 계산 (PVP)",
+    { cat: "계산기", title: "스레나 프레임 계산 (PVP)", menuName: "프레임 계산 (PVP)",
       desc: "아레나 전투를 프레임 단위로 비교 분석하는 PVP 특화 계산기. 속도 싸움이 치열한 대인전 세팅에 사실상 필수.",
       url: "https://nikke.top/" },
-    { cat: "계산기", title: "전투력 패널티 계산기",
+    { cat: "계산기", title: "전투력 패널티 계산기", menuName: "전투력 패널티",
       desc: "기준 전투력과 내 전투력을 입력하면 투력 차이(%)와 적용 스탯 패널티를 자동으로 계산. 협동작전·레이드 컷라인 확인에 유용.",
       url: "https://nikkeallsite.vercel.app/power-penalty.html" },
-    { cat: "시뮬레이션", title: "신데렐라·라피 딜량 계산",
+    { cat: "시뮬레이션", title: "신데렐라·라피 딜량 계산", menuName: "딜량 계산 (신데·라피)",
       desc: "오버로드 수치를 입력해 화력형 캐릭터의 실제 딜과 장탄·재장전을 시뮬레이션. 크뎀↔크확 같은 옵션 변경 효율을 비교하는 데 유용.",
       url: "https://nikke-fire-simulation.vercel.app/" },
-    { cat: "성장", title: "애장품 계산기 (소장품 강화 최적화 · syuen)",
+    { cat: "성장", title: "애장품 계산기 (소장품 강화 최적화 · syuen)", menuName: "애장품 최적화 (syuen)",
       desc: "보유 소장품 비율을 유지하며 강화하는 최적 경로를 계산. 장기적인 자원 운용 관점에서 직관적이고 활용도가 높음.",
       url: "https://syuen.love/doll/",
       guide: { label: "제작자 챈 요약 / 행동강령", url: "https://arca.live/b/nikketgv/128411014" } },
-    { cat: "정보", title: "니케 스킬·픽업 검색",
+    { cat: "정보", title: "니케 스킬·픽업 검색", menuName: "스킬·픽업 검색",
       desc: "스킬 검색은 물론 역대 픽업 캐릭터의 분포와 출시 시기를 빠르게 파악할 수 있는 자료형 사이트.",
       url: "https://nikkesearch.glide.page/dl/da19fa" },
-    { cat: "정보", title: "스킬검색 위키 (Skill Wiki)",
+    { cat: "정보", title: "스킬검색 위키 (Skill Wiki)", menuName: "Skill Wiki",
       desc: "캐릭터 스킬을 키워드로 찾아보기 쉽게 정리한 위키. 인게임 검색보다 직관적이라 입문자에게 추천.",
       url: "https://nikkeskillwiki.com/MainHome/" },
-    { cat: "계산기", title: "덱 빌딩 사이트 (Mimir)",
+    { cat: "계산기", title: "덱 빌딩 사이트 (Mimir)", menuName: "Mimir",
       desc: "레이드 덱 구성과 애장품 미란다 버프 적용 여부를 계산해주는 도구. 계정 연동 시 자동 분석, 수동 입력도 가능.",
       url: "https://nikkemimir.xyz/" },
-    { cat: "종합", title: "nikke.gg (종합 정보)",
+    { cat: "종합", title: "nikke.gg (종합 정보)", menuName: "nikke.gg",
       desc: "캐릭터 정보, 티어, 가이드를 폭넓게 제공하는 해외 종합 정보 사이트. 다양한 자료를 한 곳에서 확인 가능.",
       url: "https://nikke.gg/" },
-    { cat: "성장", title: "코더 계산기 (코더 수급량 사이트)",
+    { cat: "성장", title: "코더 계산기 (코더 수급량 사이트)", menuName: "코더 수급",
       desc: "전초기지 코어더스트 수급 효율을 단계별로 정리한 성장 참고 자료. 단기 섬멸 기준으로 성장 계획을 세우는 데 도움.",
       url: "https://nikkeoutpost.netlify.app/",
       guide: { label: "관련 챈 글", url: "https://arca.live/b/nikketgv/160379444" } },
-    { cat: "시뮬레이션", title: "종합 가챠·확률 시뮬 (ppopki)",
+    { cat: "시뮬레이션", title: "종합 가챠·확률 시뮬 (ppopki)", menuName: "ppopki",
       desc: "소장품 합성, 우월코드 뽑기, 오버로드 등 각종 확률 콘텐츠를 망라한 종합 시뮬레이션 사이트.",
       url: "https://ppopki.com/simulation/index.php" },
-    { cat: "시뮬레이션", title: "픽업 가챠 시뮬 (nibung)",
+    { cat: "시뮬레이션", title: "픽업 가챠 시뮬 (nibung)", menuName: "nibung",
       desc: "픽업 뽑기를 미리 돌려볼 수 있는 가챠 시뮬레이터. 가벼운 운 테스트용으로 적합.",
       url: "https://nibung.kr/gacha" },
-    { cat: "계산기", title: "리버렐리오·흑련 버프 계산기",
+    { cat: "계산기", title: "리버렐리오·흑련 버프 계산기", menuName: "리버·흑련 버프",
       desc: "리버렐리오 '차가운 수심' 차징 속도 버프 적용을 계산하는 전용 도구. 흑련의 공격력 수치 조정도 지원.",
       url: "https://milite-kim.github.io/-/" },
-    { cat: "DB", title: "니케 DB (NKAS)",
+    { cat: "DB", title: "니케 DB (NKAS)", menuName: "NKAS",
       desc: "캐릭터 리소스를 열람하는 데이터베이스. 게임 사운드트랙(OST) 감상을 함께 제공하는 점이 특징.",
       url: "https://nkas.pages.dev/" },
-    { cat: "성장", title: "소장품 강화 최적화 (changjoeconomy)",
+    { cat: "성장", title: "소장품 강화 최적화 (changjoeconomy)", menuName: "changjoeconomy",
       desc: "보유 소장품 개수를 기반으로 강화 루트를 계산해주는 도구. 11번 사이트의 대안으로 함께 비교해볼 만함.",
       url: "https://changjoeconomy.github.io/collectibles/" },
-    { cat: "시트", title: "유레 결산시트",
+    { cat: "시트", title: "유레 결산시트", menuName: "유니온 결산",
       desc: "유니온 레이드 결과를 집계·정리하는 구글 시트 템플릿. 사본을 만들어 유니온 결산 관리에 활용.",
       url: "https://docs.google.com/spreadsheets/d/1GuV-FywoN0CjeVoY4p3yfzxel15Mt8TsyhfT6b2XonA/edit?gid=737872758#gid=737872758" },
-    { cat: "위키", title: "니케 팬덤 위키", noThumb: true,
+    { cat: "시트", title: "니케 상담 족보 (구글 시트)", menuName: "상담 족보",
+      desc: "상담 족보를 구글 스프레드시트로 정리한 자료. 캐릭터 분류와 선택지를 표 형식으로 빠르게 참고하기 좋음.",
+      url: "https://docs.google.com/spreadsheets/d/13ISuBLNEeRPJF5SbLv9BLLRgGa3NFop8ffuz0dgpZdk/edit#gid=627575710" },
+    { cat: "위키", title: "니케 팬덤 위키", menuName: "팬덤 위키", noThumb: true,
       desc: "스토리와 캐릭터 설정을 영어로 정리한 글로벌 팬덤 위키. 세계관·서사 자료를 찾을 때 유용.",
       url: "https://nikke-goddess-of-victory-international.fandom.com/wiki/Home" },
-    { cat: "유틸", title: "임시 이메일 (temp-mail)", noThumb: true,
+    { cat: "유틸", title: "NIKKE 폰트·이미지 생성기", menuName: "skuqre 이미지 생성",
+      desc: "로고, 대사, 배너, 카드 등 니케 스타일 커스텀 이미지를 만드는 웹 도구 모음.",
+      url: "https://skuqre.github.io/nikke-font-generator/" },
+    { cat: "유틸", title: "임시 이메일 (temp-mail)", menuName: "temp-mail", noThumb: true,
       desc: "리세마라 시 빠르게 쓸 수 있는 1회용 이메일 서비스. 직관적인 UI로 사용이 간편함.",
       url: "https://temp-mail.org/ko" },
-    { cat: "유틸", title: "임시 이메일 (kuku.lu)",
+    { cat: "유틸", title: "임시 이메일 (kuku.lu)", menuName: "kuku.lu",
       desc: "리세마라용 임시 이메일 서비스. 여러 주소를 받아 계정 생성에 활용할 수 있음.",
       url: "https://m.kuku.lu/ko.php" },
-    { cat: "정보", title: "유실물 정리 (GameWith)",
+    { cat: "정보", title: "유실물 정리 (GameWith)", menuName: "GameWith 유실물",
       desc: "이벤트 유실물 등 일부 콘텐츠 정보를 정리한 일본 공략 페이지. 번역기로 참고하는 용도.",
       url: "https://gamewith.jp/nikke/article/show/370147" }
   ];
@@ -769,11 +926,17 @@
   const searchEl = document.getElementById("search");
   const noResults = document.getElementById("noResults");
   const cardMap = {};
+  const sideItemMap = {};
+  const sideMenuList = document.getElementById("sideMenuList");
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
+  const sideOverlay = document.getElementById("sideOverlay");
+  const sideMenuClose = document.getElementById("sideMenuClose");
 
   document.getElementById("siteCount").textContent = SITES.length;
   document.getElementById("totalCount").textContent = new Set(SITES.map(s => s.cat)).size;
 
-  const CAT_ORDER = ["전체", "계산기", "시뮬레이션", "성장", "DB", "위키", "정보", "랭킹", "시트", "종합", "유틸"];
+  const CAT_ORDER = ["전체", "공식", "계산기", "시뮬레이션", "성장", "DB", "위키", "정보", "랭킹", "시트", "종합", "유틸"];
   const DEFAULT_TOP_ORDER = [
     "https://nikkemodule.vercel.app/",
     "https://nikkeoutpost.netlify.app/",
@@ -786,7 +949,15 @@
   const EDEN_DEFAULT_POSITION = 6;
   const PENALTY_URL = "power-penalty.html";
   const PENALTY_DEFAULT_POSITION = 10;
-  let activeCat = "전체";
+  let activeCats = new Set(["전체"]);
+
+  function syncFilterChips() {
+    const showAll = activeCats.has("전체");
+    filtersEl.querySelectorAll(".chip").forEach(chip => {
+      const cat = chip.dataset.cat;
+      chip.classList.toggle("active", cat === "전체" ? showAll : activeCats.has(cat));
+    });
+  }
 
   function defaultOrder() {
     const topSites = DEFAULT_TOP_ORDER
@@ -894,22 +1065,79 @@
     orderedSites().forEach(s => grid.appendChild(cardMap[s.id]));
   }
 
+  function menuLabel(s) {
+    return `[${s.cat}] ${s.menuName || s.title}`;
+  }
+
+  function orderedSitesForMenu() {
+    return [...SITES].sort((a, b) => menuLabel(a).localeCompare(menuLabel(b), "ko"));
+  }
+
+  function buildSideMenu() {
+    sideMenuList.innerHTML = "";
+    Object.keys(sideItemMap).forEach(k => delete sideItemMap[k]);
+    orderedSitesForMenu().forEach(s => {
+      const item = document.createElement("div");
+      item.className = "side-item" + (favs.includes(s.id) ? " fav" : "");
+      item.dataset.id = s.id;
+      item.innerHTML = `
+        <a class="side-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${menuLabel(s)}</a>
+        <button class="fav-btn" type="button" title="즐겨찾기" aria-label="즐겨찾기">${starIcon()}</button>`;
+      item.querySelector(".fav-btn").addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFav(s.id);
+      });
+      sideItemMap[s.id] = item;
+      sideMenuList.appendChild(item);
+    });
+  }
+
+  function reorderSideMenu() {
+    orderedSitesForMenu().forEach(s => {
+      if (sideItemMap[s.id]) sideMenuList.appendChild(sideItemMap[s.id]);
+    });
+  }
+
+  function setFavUI(id, isFav) {
+    if (cardMap[id]) cardMap[id].classList.toggle("fav", isFav);
+    if (sideItemMap[id]) sideItemMap[id].classList.toggle("fav", isFav);
+  }
+
+  function openSideMenu() {
+    sideOverlay.hidden = false;
+    document.body.classList.add("menu-open");
+    sideMenu.setAttribute("aria-hidden", "false");
+    menuToggle.setAttribute("aria-expanded", "true");
+  }
+
+  function closeSideMenu() {
+    document.body.classList.remove("menu-open");
+    sideMenu.setAttribute("aria-hidden", "true");
+    menuToggle.setAttribute("aria-expanded", "false");
+    setTimeout(() => {
+      if (!document.body.classList.contains("menu-open")) sideOverlay.hidden = true;
+    }, 280);
+  }
+
   function toggleFav(id) {
     if (favs.includes(id)) {
       favs = favs.filter(x => x !== id);
-      cardMap[id].classList.remove("fav");
+      setFavUI(id, false);
     } else {
       favs = [id, ...favs];
-      cardMap[id].classList.add("fav");
+      setFavUI(id, true);
     }
     saveFavs(favs);
     reorder();
+    reorderSideMenu();
     applyFilter();
   }
 
   function render() {
     SITES.forEach(s => grid.appendChild(buildCard(s)));
     reorder();
+    buildSideMenu();
     applyFilter();
   }
 
@@ -917,23 +1145,32 @@
     const present = new Set(SITES.map(s => s.cat));
     const cats = CAT_ORDER.filter(c => c === "전체" || present.has(c));
     filtersEl.innerHTML = cats.map(c =>
-      `<button class="chip ${c === "전체" ? "active" : ""}" data-cat="${c}">${c}</button>`
+      `<button type="button" class="chip" data-cat="${c}">${c}</button>`
     ).join("");
     filtersEl.querySelectorAll(".chip").forEach(chip => {
       chip.addEventListener("click", () => {
-        filtersEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        activeCat = chip.dataset.cat;
+        const cat = chip.dataset.cat;
+        if (cat === "전체") {
+          activeCats = new Set(["전체"]);
+        } else {
+          activeCats.delete("전체");
+          if (activeCats.has(cat)) activeCats.delete(cat);
+          else activeCats.add(cat);
+          if (activeCats.size === 0) activeCats = new Set(["전체"]);
+        }
+        syncFilterChips();
         applyFilter();
       });
     });
+    syncFilterChips();
   }
 
   function applyFilter() {
     const q = searchEl.value.trim().toLowerCase();
+    const showAll = activeCats.has("전체");
     let visible = 0;
     grid.querySelectorAll(".card").forEach(card => {
-      const matchCat = activeCat === "전체" || card.dataset.cat === activeCat;
+      const matchCat = showAll || activeCats.has(card.dataset.cat);
       const matchSearch = !q || card.dataset.search.includes(q);
       const show = matchCat && matchSearch;
       card.style.display = show ? "" : "none";
@@ -982,6 +1219,14 @@
   });
 
   searchEl.addEventListener("input", applyFilter);
+
+  menuToggle.addEventListener("click", openSideMenu);
+  sideMenuClose.addEventListener("click", closeSideMenu);
+  sideOverlay.addEventListener("click", closeSideMenu);
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && document.body.classList.contains("menu-open")) closeSideMenu();
+  });
+
   buildFilters();
   render();
 </script>
